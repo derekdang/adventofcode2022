@@ -1,3 +1,4 @@
+# https://adventofcode.com/2022/day/1
 import sys
 
 if __name__ == "__main__":
