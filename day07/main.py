@@ -37,8 +37,6 @@ if __name__ == "__main__":
     current_dir = {}
     path = "/"
     file_system = {"/":{}}
-    # any lines with $ are important for where we're located
-    # other lines tell us the structure
     info = []
     is_ls = False
     for line in data:
@@ -109,4 +107,4 @@ if __name__ == "__main__":
     meets_deletion_criteria = []
     find_closest_min_dir_to_delete(file_system, meets_deletion_criteria)
     meets_deletion_criteria.sort()
-    print(f"Part 2:{meets_deletion_criteria[0]}")
+    print(f"Part 2: {meets_deletion_criteria[0]}")
