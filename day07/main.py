@@ -101,8 +101,8 @@ if __name__ == "__main__":
         traverse(v,dir_sizes)
     print(f"Part 1: {sum(dir_sizes)}")
     total_size = find_total_size(file_system)
-    unused_space = 70000000-48008081
-    space_to_free = 30000000 - 21991919
+    unused_space = 70000000-total_size
+    space_to_free = 30000000 - unused_space
     print(f"Space minimum needed to delete: {space_to_free}")
     meets_deletion_criteria = []
     find_closest_min_dir_to_delete(file_system, meets_deletion_criteria)
