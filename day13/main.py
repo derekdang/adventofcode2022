@@ -158,7 +158,7 @@ if __name__ == "__main__":
                 break
         if right_order==-1:
             correct_pairs = correct_pairs + (i+1)
-            print(f"Correct Pair Score: updated with {i+1} now {correct_pairs}")
+            print(f"Part 1 Correct Pair Score: updated with {i+1} now {correct_pairs}")
         print(correct_pairs)
 
     all_packets.append([[2]])
@@ -167,4 +167,4 @@ if __name__ == "__main__":
     all_packets = (sorted(all_packets,key=functools.cmp_to_key(compare)))
     two_packet_index = all_packets.index([[2]])+1
     six_packet_index = all_packets.index([[6]])+1
-    print(two_packet_index*six_packet_index)
+    print(f"Part 2: {two_packet_index*six_packet_index}") # sort is currently off by 1 :/
