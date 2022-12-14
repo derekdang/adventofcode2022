@@ -58,12 +58,12 @@ if __name__ == "__main__":
         for i,point in enumerate(points):
             if i == 0:
                 prev_point = [int(p) if p.isdigit() else p for p in point.strip().split(',')]
+                continue
             else:
                 current_point = [int(p) if p.isdigit() else p for p in point.strip().split(',')]
-            if current_point != []:
-                floor = max(floor, max(prev_point[1],current_point[1]))
-                build_rocks(grid,prev_point,current_point)
-                prev_point = current_point         
+            floor = max(floor, max(prev_point[1],current_point[1]))
+            build_rocks(grid,prev_point,current_point)
+            prev_point = current_point         
     build_floor(grid,floor+2) # remove for part 1 answer
     counter = 0
     while(not sand_fall(grid,500,0)):
