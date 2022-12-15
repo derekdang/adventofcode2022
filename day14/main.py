@@ -1,4 +1,4 @@
-# https://adventofcode.com/2022/day/4
+# https://adventofcode.com/2022/day/14
 import sys
 
 def print_grid_in_range(grid, x,y):
