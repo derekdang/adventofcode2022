@@ -1,8 +1,6 @@
-# https://adventofcode.com/2022/day/10
+# https://adventofcode.com/2022/day/11
 import sys
 import re
-id = "\d+"
-re.findall(r'\d+','    If false: throw to monkey 1')
 class Monkey:
     def __init__(self, id, starting_items, test, truth_monkey, false_monkey):
         self.id = id
@@ -46,12 +44,12 @@ def operate(id,item):
 if __name__ == "__main__":
     data = open(sys.argv[1]).read()
     monkey_data = list(filter(None,data.split("Monkey")))
-    print(monkey_data)
+    # print(monkey_data)
     
     monkeys = list()        
     for d in monkey_data:
         info = list(filter(None,d.split("\n")))
-        print(info)
+        # print(info)
         id,starting_items,operation,test,truth_monkey,false_monkey = -1,[],"",0,-1,-1
         for i,item in enumerate(info):
             if i == 0:
