@@ -31,24 +31,37 @@ class Valve:
     def __str__(self):    
         return f"Valve: {self.id}\nOpen: {self.is_open}\nflow rate: {self.flow_rate}\n{self.connecting_valves}\n"
 
-def explore(valves,curr_valve,minute,open_valves,total_flow,cumulative_flow_rate):
-    print(curr_valve.id, minute)
-    total_flow = total_flow + cumulative_flow_rate
+def explore(valves,open_valves,helper,actions,curr_valve,minute,total_flow_rate,total_flow):
     if minute == 0:
-        return total_flow
-    
-    # case for all valves w/ flow opened?
-
-    if curr_valve.id not in open_valves and curr_valve.flow_rate != 0:
-        open_valves.add(curr_valve.id)
-        total_flow = max(total_flow,explore(valves,curr_valve,minute-1,copy.deepcopy(open_valves),total_flow,cumulative_flow_rate+curr_valve.flow_rate))
-        open_valves.remove(curr_valve.id)
-            
-    for i in curr_valve.connecting_valves:
-        conn_valve = valves[i]
-        total_flow = max(total_flow,explore(valves,conn_valve,minute-1,copy.deepcopy(open_valves),total_flow,cumulative_flow_rate))
-    
-    return total_flow
+        return total_flow_rate
+    print(f"Currently at {curr_valve.id}, open valves are: {open_valves} at minute {minute} with total_flow_rate of {total_flow_rate}")
+    if minute not in helper:
+        helper[minute] = [total_flow_rate, curr_valve, copy.deepcopy(open_valves)]
+    else:
+        
+    if total_flow_rate > helper[minute][0]:
+        helper[minute] = [total_flow_rate, curr_valve, copy.deepcopy(open_valves)]
+    if curr_valve.flow_rate == 0 or curr_valve.id in open_valves:
+        for conn_valve in curr_valve.connecting_valves:
+            actions.append(f"You move to valve {conn_valve}")
+            explore(valves,copy.deepcopy(open_valves), helper, copy.deepcopy(actions),valves[conn_valve],minute-1,total_flow_rate,total_flow+total_flow_rate)
+            actions.pop()
+    else:
+        valve_to_open = curr_valve.id
+        valve_to_open_rate = curr_valve.flow_rate
+        for conn_valve in curr_valve.connecting_valves:
+            if valve_to_open_rate < valves[conn_valve].flow_rate and conn_valve not in open_valves:
+                valve_to_open = conn_valve
+                valve_to_open_rate = valves[conn_valve].flow_rate
+        if valve_to_open == curr_valve.id:
+            open_valves.append(curr_valve.id)
+            actions.append(f"You open valve {curr_valve.id}")
+            explore(valves,copy.deepcopy(open_valves), helper,copy.deepcopy(actions),curr_valve,minute-1,total_flow_rate+curr_valve.flow(),total_flow+total_flow_rate)
+            actions.pop()
+            open_valves.remove(curr_valve.id)
+        else:
+            actions.append(f"You move to valve {valve_to_open}")
+            explore(valves,copy.deepcopy(open_valves), helper,copy.deepcopy(actions),valves[valve_to_open], minute-1,total_flow_rate, total_flow+total_flow_rate)
 
 if __name__ == "__main__":
     data = open(sys.argv[1]).read().splitlines()
@@ -66,10 +79,11 @@ if __name__ == "__main__":
         valves[valve] = new_valve
 
     
-    open_valves = set()
+    open_valves = []
     # recursive traversal
     pos = "AA"
-    total_flow = 0
-    
-    current_valve = valves[pos]
-    explore(valves,current_valve,30,open_valves,total_flow,0)
+    minute,total_flow_rate,total_flow = 30,0,0
+    curr_valve = valves[pos]
+    actions = []
+    helper = dict()
+    explore(valves,open_valves,helper,actions,curr_valve,minute,total_flow_rate,total_flow)
