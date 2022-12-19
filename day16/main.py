@@ -31,37 +31,45 @@ class Valve:
     def __str__(self):    
         return f"Valve: {self.id}\nOpen: {self.is_open}\nflow rate: {self.flow_rate}\n{self.connecting_valves}\n"
 
-def explore(valves,open_valves,helper,actions,curr_valve,minute,total_flow_rate,total_flow):
-    if minute == 0:
-        return total_flow_rate
-    print(f"Currently at {curr_valve.id}, open valves are: {open_valves} at minute {minute} with total_flow_rate of {total_flow_rate}")
-    if minute not in helper:
-        helper[minute] = [total_flow_rate, curr_valve, copy.deepcopy(open_valves)]
+def find_shortest_path_between_valves(valves,visited_valves,v1,v2):
+    if v1.id == v2.id:
+        return 0
+    visited_valves.append(v1.id)
+    min_path = 1000
+    for conn_valve in v1.connecting_valves:
+        if conn_valve not in visited_valves:
+            min_path = min(min_path,1 + find_shortest_path_between_valves(valves,copy.deepcopy(visited_valves),valves[conn_valve],v2))
+    if min_path == 1000:
+        return 1000
     else:
-        
-    if total_flow_rate > helper[minute][0]:
-        helper[minute] = [total_flow_rate, curr_valve, copy.deepcopy(open_valves)]
-    if curr_valve.flow_rate == 0 or curr_valve.id in open_valves:
-        for conn_valve in curr_valve.connecting_valves:
-            actions.append(f"You move to valve {conn_valve}")
-            explore(valves,copy.deepcopy(open_valves), helper, copy.deepcopy(actions),valves[conn_valve],minute-1,total_flow_rate,total_flow+total_flow_rate)
-            actions.pop()
-    else:
-        valve_to_open = curr_valve.id
-        valve_to_open_rate = curr_valve.flow_rate
-        for conn_valve in curr_valve.connecting_valves:
-            if valve_to_open_rate < valves[conn_valve].flow_rate and conn_valve not in open_valves:
-                valve_to_open = conn_valve
-                valve_to_open_rate = valves[conn_valve].flow_rate
-        if valve_to_open == curr_valve.id:
-            open_valves.append(curr_valve.id)
-            actions.append(f"You open valve {curr_valve.id}")
-            explore(valves,copy.deepcopy(open_valves), helper,copy.deepcopy(actions),curr_valve,minute-1,total_flow_rate+curr_valve.flow(),total_flow+total_flow_rate)
-            actions.pop()
-            open_valves.remove(curr_valve.id)
-        else:
-            actions.append(f"You move to valve {valve_to_open}")
-            explore(valves,copy.deepcopy(open_valves), helper,copy.deepcopy(actions),valves[valve_to_open], minute-1,total_flow_rate, total_flow+total_flow_rate)
+        return min_path
+
+def p1(valves,open_valves,nonzero_valves,curr_valve,minute,total_flow_rate,sum_flow):
+    if sorted(open_valves) == sorted(nonzero_valves):
+        print("all valves open")
+        print(sum_flow)
+        return
+    # look at nonzero valves and find the best production
+    dist_map,production = {},{}
+    max_dist = -1
+    for nz_valve in nonzero_valves:
+        if nz_valve not in open_valves:
+            target_valve = valves[nz_valve]
+            dist = find_shortest_path_between_valves(valves,[],curr_valve,target_valve)
+            max_dist = max(dist,max_dist)
+            dist_map[nz_valve] = dist
+    
+    best_move,best_prod = '',-1
+    for nz_valve in dist_map:
+        production = (30 - minute - (max_dist - dist_map[nz_valve] + 1)) * (total_flow_rate+valves[nz_valve].flow_rate)
+        if production > best_prod:
+            best_prod = production
+            best_move = nz_valve
+    open_valves.append(best_move)
+    print(f"opening: {best_move}")
+    dest_valve = valves[best_move]
+    s_flow = total_flow_rate*(dist_map[best_move]+1)
+    p1(valves,open_valves,nonzero_valves,dest_valve, minute+dist_map[best_move]+1, total_flow_rate+dest_valve.flow_rate,s_flow)
 
 if __name__ == "__main__":
     data = open(sys.argv[1]).read().splitlines()
@@ -78,12 +86,12 @@ if __name__ == "__main__":
             nonzero_valves.append(valve)
         valves[valve] = new_valve
 
-    
     open_valves = []
     # recursive traversal
     pos = "AA"
-    minute,total_flow_rate,total_flow = 30,0,0
+    minute,total_flow_rate,sum_flow = 0,0,0
     curr_valve = valves[pos]
     actions = []
-    helper = dict()
-    explore(valves,open_valves,helper,actions,curr_valve,minute,total_flow_rate,total_flow)
+    # explore(valves,open_valves,actions,curr_valve,minute,total_flow_rate,total_flow)
+    # print(find_shortest_path_between_valves(valves,[],valves['BB'],valves['HH']))
+    p1(valves,open_valves,nonzero_valves,curr_valve,minute,total_flow_rate,sum_flow)
