@@ -19,18 +19,12 @@ class Rock:
         self.arr = arr.copy()
     
     def move_left(self):
-        for line in self.arr:
-            if line[0] == '#':
-                return
         for i,line in enumerate(self.arr):
             line = line[1:]
             line = line + '.'
             self.arr[i] = line
     
     def move_right(self):
-        for line in self.arr:
-            if line[6] == '#':
-                return
         for i,line in enumerate(self.arr):
             line = line[:-1]
             line = '.'+ line
