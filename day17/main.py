@@ -1,5 +1,6 @@
 # https://adventofcode.com/2022/day/17
 import sys
+import math
 rock1 = ['..####.']
 rock2 = ['...#...','..###..','...#...']
 rock3 = ['..###..','....#..','....#..']
@@ -148,13 +149,13 @@ def p1():
         # print('\n')
 
     # print_cave(cave)
-    print(len(cave))
+    print("Part 1 Height of rocks after 2022 rocks: " + str(len(cave)))
 
 def p2():
     rock_pattern = [rock1,rock2,rock3,rock4,rock5]
     cave = []
     start_height = 4
-    num_rocks = 4500
+    num_rocks = 2755
     running_cave_height = 0
     prev_rock_no = 0
     jetstream_pos = 0
@@ -164,7 +165,7 @@ def p2():
                 c_line = cave[len(cave)-1-y]
                 if c_line == "#######":
                     # cycle adds 2767 lines of height every 1745 rocks starting at rock 1459
-                    # (1 TRILLION - 1458)%1745 = # of left over rocks that we need calculate
+                    # (1 TRILLION - 1458)%1745 = # of left over rocks that we need calculate = 1297
                     prev_delta_cave_height = running_cave_height 
                     running_cave_height = running_cave_height + len(cave)
                     cave = cave[len(cave)-1-y:] #15838-10000, 1585676 - 1mil
@@ -198,7 +199,8 @@ def p2():
             else:
                 cave.append(line)
         start_height = len(cave) + 4
-    print(len(cave)+running_cave_height)    
+    product = math.floor((1000000000000-1458)/1745*2767)
+    print("Part 2 Height after 1 Trillion Rocks: " + str(len(cave)+ product))   
 if __name__ == "__main__":
     jetstream = open(sys.argv[1]).read().splitlines()[0]
     p1()
