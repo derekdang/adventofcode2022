@@ -103,7 +103,7 @@ def p1():
     rock_pattern = [rock1,rock2,rock3,rock4,rock5]
     cave = []
     start_height = 4
-    num_rocks = 10000
+    num_rocks = 2022
     jetstream_pos = 0
     for x in range(num_rocks):
         rock_no = x % 5
@@ -163,7 +163,8 @@ def p2():
             for y in reversed(range(4)):
                 c_line = cave[len(cave)-1-y]
                 if c_line == "#######":
-                    # cycle adds 2767 lines of height every 1745 rocks starting at rock 1458
+                    # cycle adds 2767 lines of height every 1745 rocks starting at rock 1459
+                    # (1 TRILLION - 1458)%1745 = # of left over rocks that we need calculate
                     prev_delta_cave_height = running_cave_height 
                     running_cave_height = running_cave_height + len(cave)
                     cave = cave[len(cave)-1-y:] #15838-10000, 1585676 - 1mil
